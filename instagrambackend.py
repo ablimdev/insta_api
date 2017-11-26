@@ -1,28 +1,28 @@
-#import requests
-#r = requests.get("https://instagram.com/alexlim")
-#print r.text
-
-a = {
-	'hello':'world',
-	'halp': 3,
-	'hi': True,
-	'we': [],
-	'blah': ["one", "two", "three"],
-	'dicts': {},
-	'dicts2': {
-		'stuff': 'cool'
-	}
-}
-print a.get('dicts2').get('stuff')
-print a['dicts2']['stuff']
-#print a['hh']
-
+#!/usr/bin/python
+# -*- coding: iso-8859-15 -*-
+import requests
+import re
 import json
-b = """{\"hello\":\"world\"}"""
-c = json.loads(b)
-print b
 
-print c.get("hello")
+#http://jsonviewer.stack.hu/
+r = requests.get("https://instagram.com/alexlim")
+html_page = r.text
 
-d = json.dumps(c)
-print d
+result = re.search('window._sharedData = (.*);</script>', html_page)
+
+
+insta_json = json.loads(result.group(1))
+
+insta_user  = insta_json['entry_data']['ProfilePage'][0]['user']
+
+api_results = {
+	'biography': insta_user['biography'],
+	'external_url':insta_user['external_url'],
+	'followed_by':insta_user['followed_by']['count'],
+	'follows':insta_user['follows']['count'],
+	'full_name':insta_user['full_name'],
+	'id':insta_user['id'],
+	'profile_pic':insta_user['profile_pic_url'],
+	'username':insta_user['username']
+}
+print api_results
